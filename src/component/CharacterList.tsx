@@ -115,6 +115,14 @@ function CharacterList() {
     return league.name;
   }
 
+  function compareCreatedAt(a: CharacterType, b: CharacterType) {
+    if (a.createdAt > b.createdAt) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }
+
   useEffect(() => {
     getData();
   }, []);
@@ -125,33 +133,35 @@ function CharacterList() {
         return (
           <>
             <h2>{getLeagueTitle(league)}</h2>
-            {characters.map((character: CharacterType) => {
-              if (character.league === league.id) {
-                return (
-                  <div style={{ width: 600 }} key={character.id}>
-                    <h3>
-                      {character.number}호 - {character.name}(~{" "}
-                      {dateToFormatString(character.createdAt)})
-                    </h3>
-                    {character.tags !== undefined &&
-                      character.tags.map((tag) => (
-                        <span key={tag}>#{getTagInfo(tag)}</span>
-                      ))}
-                    <iframe
-                      //   src="https://clips.twitch.tv/embed?clip=AnimatedUnusualButterflySoBayed-oZUhkpJGLbM-11Pi&parent=localhost"
-                      src={getVideoUrl(character.videoUrl)}
-                      frameBorder="0"
-                      allowFullScreen={true}
-                      scrolling="no"
-                      width="620"
-                      height="378"
-                    />
-                  </div>
-                );
-              } else {
-                return "";
-              }
-            })}
+            {characters
+              .sort(compareCreatedAt)
+              .map((character: CharacterType) => {
+                if (character.league === league.id) {
+                  return (
+                    <div style={{ width: 600 }} key={character.id}>
+                      <h3>
+                        {character.number}호 - {character.name}(~{" "}
+                        {dateToFormatString(character.createdAt)})
+                      </h3>
+                      {character.tags !== undefined &&
+                        character.tags.map((tag) => (
+                          <span key={tag}>#{getTagInfo(tag)}</span>
+                        ))}
+                      <iframe
+                        //   src="https://clips.twitch.tv/embed?clip=AnimatedUnusualButterflySoBayed-oZUhkpJGLbM-11Pi&parent=localhost"
+                        src={getVideoUrl(character.videoUrl)}
+                        frameBorder="0"
+                        allowFullScreen={true}
+                        scrolling="no"
+                        width="620"
+                        height="378"
+                      />
+                    </div>
+                  );
+                } else {
+                  return "";
+                }
+              })}
           </>
         );
       })}
